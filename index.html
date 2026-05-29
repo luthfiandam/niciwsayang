@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You ❤️</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;500&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            position: relative;
+            cursor: pointer; /* Semua area bisa diklik */
+        }
+
+        /* --- COVER --- */
+        #cover {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.8s ease;
+            padding: 20px;
+        }
+
+        #cover.open {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .btn-buka {
+            padding: 15px 40px;
+            background: #ff4b5c;
+            color: white;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            margin-top: 20px;
+            box-shadow: 0 8px 20px rgba(255, 75, 92, 0.4);
+        }
+
+        /* --- MAIN AREA (Klik di sini juga bisa) --- */
+        #main-layer {
+            z-index: 1;
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+
+        #main-layer.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* --- KONTAINER TEKS --- */
+        .text-container {
+            min-height: 120px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .message-line {
+            font-size: clamp(1.3rem, 4vw, 1.9rem);
+            font-weight: 300;
+            margin: 6px 0;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s forwards ease;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- LOVE BUTTON (ORnamen) --- */
+        .love-btn {
+            font-size: clamp(3rem, 10vw, 5rem);
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.2s;
+            filter: drop-shadow(0 5px 15px rgba(255, 75, 92, 0.4));
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .instruction {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 15px;
+        }
+
+        /* --- EMOJI YANG MUNCUL --- */
+        .floating-emoji {
+            position: absolute;
+            pointer-events: none;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            animation: floatUp 2s forwards ease-out;
+            z-index: 10;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-150px) scale(1.3) rotate(20deg); opacity: 0; }
+        }
+
+        /* --- BACKGROUND HEARTS --- */
+        .bg-heart {
+            position: absolute;
+            color: #fff;
+            opacity: 0.5;
+            animation: fall linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- COVER -->
+    <div id="cover">
+        <h1 style="font-family: 'Pacifico'; color: #ff4b5c; font-size: clamp(2.5rem, 8vw, 4rem);">For You ❤️</h1>
+        <p style="color: #666; font-size: 1rem; margin-top: 10px;">Something special...</p>
+        <button class="btn-buka" onclick="bukaCover()">Buka ❤️</button>
+    </div>
+
+    <!-- KONTEN UTAMA -->
+    <div id="main-layer">
+        <!-- Teks numpuk di sini -->
+        <div class="text-container" id="textContainer">
+            <div class="message-line">Klik di mana saja untuk aku...</div>
+        </div>
+
+        <!-- Tombol love (cuma visual) -->
+        <div class="love-btn">❤️</div>
+        
+        <div class="instruction">Klik di manapun di layar ini! 👆</div>
+    </div>
+
+    <script>
+        // --- KATA-KATA & EMOJI ---
+        const kataKata = [
+            "Halo sayangkuuu 🤗",
+            "Hari ini aku mau ngajak kamu jalan 💫",
+            "Tapi sebelumnya, aku mau kamu tau...",
+            "Kalau aku itu SALAH SATU hal yang terbaik dalam hidupmu ✨",
+            "Makasih udah jadi kamu ❤️",
+            "Thank you for everything 😘",
+            "I Love You 3000 🤟",
+            "You are my everything 💖",
+            "Mau yan selalu bareng kamu forever 🌹",
+            "Kiss kiss buat kamu 😙😙😙"
+        ];
+
+        const listEmoji = ['❤️','🧡','💛','💚','💙','💜','🖤','💍','🥰','😘','💑','👩‍❤️‍👨','👨‍❤️‍👨','✨','🌟','💫','🎵','🌹'];
+
+        let currentIndex = 0;
+        const container = document.getElementById('textContainer');
+
+        // --- BUKA COVER ---
+        function bukaCover() {
+            document.getElementById('cover').classList.add('open');
+            document.getElementById('main-layer').classList.add('active');
+            
+            // Mulai background hearts setelah cover terbuka
+            setTimeout(() => {
+                setInterval(createBgHeart, 800);
+            }, 800);
+        }
+
+        // --- FUNGSI UTAMA: KLIK DI MANAAPUN ---
+        document.addEventListener('click', function(e) {
+            // Jangan jalankan kalau masih di cover
+            if(!document.getElementById('main-layer').classList.contains('active')) return;
+
+            // 1. Tambah teks baru (stack effect)
+            addNextText();
+
+            // 2. Spawn emoji di posisi klik
+            spawnEmoji(e.clientX, e.clientY);
+        });
+
+        // --- TAMBAH TEKS BARU ---
+        function addNextText() {
+            const p = document.createElement('div');
+            p.className = 'message-line';
+            p.innerText = kataKata[currentIndex];
+            
+            container.appendChild(p);
+
+            // Batasi maks 4 teks biar tidak numpuk
+            if(container.children.length > 4) {
+                container.removeChild(container.children[0]);
+            }
+
+            currentIndex = (currentIndex + 1) % kataKata.length;
+        }
+
+        // --- SPAWN EMOJI DI POSISI KLIK ---
+        function spawnEmoji(x, y) {
+            const el = document.createElement('div');
+            el.className = 'floating-emoji';
+            
+            // Emoji random
+            const randomEmoji = listEmoji[Math.floor(Math.random() * listEmoji.length)];
+            el.innerText = randomEmoji;
+            
+            // Offset dikit biar tidak tepat di jari
+            const offsetX = (Math.random() * 60) - 30;
+            const offsetY = (Math.random() * 40) - 20;
+            
+            el.style.left = (x + offsetX) + 'px';
+            el.style.top = (y + offsetY) + 'px';
+            
+            document.body.appendChild(el);
+
+            // Hapus setelah animasi selesai
+            setTimeout(() => el.remove(), 2000);
+        }
+
+        // --- BACKGROUND HEARTS ---
+        function createBgHeart() {
+            const h = document.createElement('div');
+            h.className = 'bg-heart';
+            h.innerText = '💗';
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.top = '-20px';
+            h.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            h.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 10000);
+        }
+
+    </script>
+</body>
+</html>
